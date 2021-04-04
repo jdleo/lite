@@ -13,7 +13,7 @@ function App() {
       <Navbar />
       <Title />
       <LinkInput link={link} onChange={e => setLink(e.target.value)} setShortLink={setShortLink} />
-      {shortLink !== '' && <LinkOutput shortLink={shortLink} />}
+      {shortLink !== '' && <LinkOutput shortLink={shortLink} setShortLink={setShortLink} />}
       <Wave />
     </>
   );
