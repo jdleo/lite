@@ -4,14 +4,22 @@ import Col from 'react-bootstrap/Col';
 
 import useWindowDimensions from '../helpers/useWindowDimensions';
 import randomString from '../helpers/randomString';
+import isValidURL from '../helpers/isValidURL';
 
-export default function LinkInput({ onChange, link, setShortLink }) {
+export default function LinkInput({ onChange, link, setShortLink, setError }) {
   // state mgmt
   const { _, width } = useWindowDimensions();
 
   // helper function for handling link shortener button
   const handleShorten = () => {
-    setShortLink('link.fyi/' + randomString(5));
+    // validate url
+    if (isValidURL(link.trim())) {
+      // clear error (if any)
+      setError('');
+      setShortLink('link.fyi/' + randomString(5));
+    } else {
+      setError('Your link is invalid');
+    }
   };
 
   return (
