@@ -1,6 +1,6 @@
 import './App.css';
 
-import { Navbar, Title, LinkInput, LinkOutput } from './components';
+import { Navbar, Title, LinkInput, LinkOutput, Wave } from './components';
 
 function App() {
   return (
@@ -9,6 +9,7 @@ function App() {
       <Title />
       <LinkInput />
       <LinkOutput />
+      <Wave />
     </>
   );
 }
