@@ -1,11 +1,10 @@
-import { useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import useWindowDimensions from '../helpers/useWindowDimensions';
 
-export default function LinkInput() {
+export default function LinkInput({ onChange, link }) {
   // state mgmt
   const { _, width } = useWindowDimensions();
 
@@ -13,7 +12,7 @@ export default function LinkInput() {
     <Container style={{ ...styles.container, ...(width > 500 ? { width: '60%' } : { width: '90%' }) }}>
       <Row style={styles.row}>
         <Col xs={8} md={9}>
-          <input placeholder={'Paste your link...'} style={styles.input} />
+          <input placeholder={'Paste your link...'} style={styles.input} value={link} onChange={onChange} />
         </Col>
         <Col xs={4} md={3}>
           <button style={styles.button}>Lite!</button>

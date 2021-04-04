@@ -5,7 +5,7 @@ import useWindowDimensions from '../helpers/useWindowDimensions';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export default function LinkOutput() {
+export default function LinkOutput({ shortLink }) {
   // state mgmt
   const { _, width } = useWindowDimensions();
 
@@ -13,7 +13,7 @@ export default function LinkOutput() {
     <Container style={{ ...styles.container, ...(width > 500 ? { width: '40%' } : { width: '80%' }) }}>
       <Row style={styles.row}>
         <Col xs={9} className="align-self-center text-center" style={styles.linkContainer}>
-          link.fyi/bV56o
+          {shortLink}
         </Col>
         <Col xs={3} className="align-self-center text-center" style={styles.copyContainer}>
           <FontAwesomeIcon icon={faCopy} />
