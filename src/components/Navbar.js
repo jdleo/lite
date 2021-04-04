@@ -34,7 +34,7 @@ export default function NavbarWrapper() {
   };
 
   return (
-    <Navbar style={width > 500 && styles.navbarBig} className="navbar-main">
+    <Navbar style={width > 500 ? styles.navbarBig : {}} className="navbar-main">
       <Navbar.Brand href="/" className="navbar-brand" style={styles.navbarBrand}>
         lite.fyi
       </Navbar.Brand>
