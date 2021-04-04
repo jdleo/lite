@@ -3,10 +3,16 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import useWindowDimensions from '../helpers/useWindowDimensions';
+import randomString from '../helpers/randomString';
 
-export default function LinkInput({ onChange, link }) {
+export default function LinkInput({ onChange, link, setShortLink }) {
   // state mgmt
   const { _, width } = useWindowDimensions();
+
+  // helper function for handling link shortener button
+  const handleShorten = () => {
+    setShortLink('link.fyi/' + randomString(5));
+  };
 
   return (
     <Container style={{ ...styles.container, ...(width > 500 ? { width: '60%' } : { width: '90%' }) }}>
@@ -15,7 +21,9 @@ export default function LinkInput({ onChange, link }) {
           <input placeholder={'Paste your link...'} style={styles.input} value={link} onChange={onChange} />
         </Col>
         <Col xs={4} md={3}>
-          <button style={styles.button}>Lite!</button>
+          <button style={styles.button} onClick={() => handleShorten()}>
+            Lite!
+          </button>
         </Col>
       </Row>
     </Container>
