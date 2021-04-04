@@ -1,7 +1,13 @@
 import './App.css';
 
+import { Navbar } from './components';
+
 function App() {
-  return <div>lite.fyi</div>;
+  return (
+    <div>
+      <Navbar />
+    </div>
+  );
 }
 
 export default App;
