@@ -12,10 +12,10 @@ export default function LinkInput() {
   return (
     <Container style={{ ...styles.container, ...(width > 500 ? { width: '60%' } : { width: '90%' }) }}>
       <Row style={styles.row}>
-        <Col xs={9}>
-          <input placeholder={'Paste your link here...'} style={styles.input} />
+        <Col xs={8} md={9}>
+          <input placeholder={'Paste your link...'} style={styles.input} />
         </Col>
-        <Col xs={3}>
+        <Col xs={4} md={3}>
           <button style={styles.button}>Lite!</button>
         </Col>
       </Row>
