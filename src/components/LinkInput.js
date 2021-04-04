@@ -1,6 +1,7 @@
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import axios from 'axios';
 
 import useWindowDimensions from '../helpers/useWindowDimensions';
 import randomString from '../helpers/randomString';
@@ -11,12 +12,25 @@ export default function LinkInput({ onChange, link, setShortLink, setError }) {
   const { _, width } = useWindowDimensions();
 
   // helper function for handling link shortener button
-  const handleShorten = () => {
+  const handleShorten = async () => {
     // validate url
     if (isValidURL(link.trim())) {
-      // clear error (if any)
-      setError('');
-      setShortLink('link.fyi/' + randomString(5));
+      // make post request
+      const res = await axios.post('.netlify/functions/shrink', { link: link.trim() });
+
+      // error check
+      if (res.data) {
+        if (res.data.success) {
+          // clear error (if any)
+          setError('');
+          setShortLink(res.data.shortLink);
+        } else {
+          // set error (if any)
+          setError(res.data.error);
+        }
+      } else {
+        setError(res.data);
+      }
     } else {
       setError('Your link is invalid');
     }
