@@ -1,0 +1,7 @@
+[build]
+  functions = "./api"
+
+[[redirects]]
+  from = "/:code"
+  to = "/.netlify/functions/expand/:code"
+  status = 200
