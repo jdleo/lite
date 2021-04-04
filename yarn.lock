@@ -8993,13 +8993,6 @@ raf@^3.4.1:
   dependencies:
     performance-now "^2.1.0"
 
-random-shapes@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/random-shapes/-/random-shapes-0.2.1.tgz#daf5df15d9985cde9d52591ef1a4c2e68b57ac97"
-  integrity sha512-zY+Z+bKNKU0uY9r+PrVQ198NzLnrDjGUpTDoN+alUNTM5T2EYFoCLuOnmdhH+tJwnjN/SQ06cn1FD6SeYN1CiQ==
-  dependencies:
-    seedrandom "^3.0.5"
-
 randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5, randombytes@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.1.0.tgz#df6f84372f0270dc65cdf6291349ab7a473d4f2a"
@@ -9138,13 +9131,6 @@ react-overlays@^5.0.0:
     prop-types "^15.7.2"
     uncontrollable "^7.0.0"
     warning "^4.0.3"
-
-react-random-shapes@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/react-random-shapes/-/react-random-shapes-0.6.0.tgz#4d7871bc34247c6b7d48f37745c91408bb83815b"
-  integrity sha512-9jzivuss/q2j+pqD3U1uz/GkZJ3FW5HWCvNoIN6XxW9enf58I18PyUSt+VaulIZQQUT3ZL5HXDMplFremKJ8gA==
-  dependencies:
-    random-shapes "^0.2.1"
 
 react-refresh@^0.8.3:
   version "0.8.3"
@@ -9775,11 +9761,6 @@ schema-utils@^3.0.0:
     "@types/json-schema" "^7.0.6"
     ajv "^6.12.5"
     ajv-keywords "^3.5.2"
-
-seedrandom@^3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/seedrandom/-/seedrandom-3.0.5.tgz#54edc85c95222525b0c7a6f6b3543d8e0b3aa0a7"
-  integrity sha512-8OwmbklUNzwezjGInmZ+2clQmExQPvomqjL7LFqOYqtmuxRgQYqOD3mHaU+MvZn5FLUeVxVfQjwLZW/n/JFuqg==
 
 select-hose@^2.0.0:
   version "2.0.0"
