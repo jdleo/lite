@@ -35,6 +35,6 @@ exports.handler = async (req, ctx, res) => {
     res(null, { statusCode: 301, headers: { Location: link } });
   } else {
     // just 301 to homepage
-    res(null, { statusCode: 301, headers: { Location: req.headers.host } });
+    res(null, { statusCode: 301, headers: { Location: 'http://' + req.headers.host } });
   }
 };
