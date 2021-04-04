@@ -43,7 +43,7 @@ export default function NavbarWrapper() {
         <Nav.Link href="#" onClick={e => toggleDarkMode(e)} style={styles.navbarLink}>
           {darkMode === 1 ? 'Light Mode' : 'Dark Mode'}
         </Nav.Link>
-        <Nav.Link href="https://github.com/jdleo/lite" style={styles.navbarLink}>
+        <Nav.Link href="https://github.com/jdleo/lite" target="_blank" style={styles.navbarLink}>
           Github
         </Nav.Link>
       </Navbar.Collapse>
