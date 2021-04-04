@@ -3,5 +3,6 @@ import Title from './Title';
 import LinkInput from './LinkInput';
 import LinkOutput from './LinkOutput';
 import Wave from './Wave';
+import Error from './Error';
 
-export { Navbar, Title, LinkInput, LinkOutput, Wave };
+export { Navbar, Title, LinkInput, LinkOutput, Wave, Error };
