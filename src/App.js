@@ -1,5 +1,7 @@
+import './App.css';
+
 function App() {
-  return <div>hello</div>;
+  return <div>lite.fyi</div>;
 }
 
 export default App;
