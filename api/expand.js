@@ -22,7 +22,6 @@ exports.handler = async (req, ctx, res) => {
 
   // look up code in database
   const links = await db.collection('links').where('code', '==', code).get();
-  console.log(code, links);
 
   // check if we found one
   if (!links.empty) {
@@ -36,6 +35,6 @@ exports.handler = async (req, ctx, res) => {
     res(null, { statusCode: 301, headers: { Location: link } });
   } else {
     // just 301 to homepage
-    res(null, { statusCode: 301, headers: { Location: 'http://localhost:8888' } });
+    res(null, { statusCode: 301, headers: { Location: req.headers.host } });
   }
 };
