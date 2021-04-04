@@ -19,6 +19,7 @@ const styles = {
   title: {
     fontFamily: "'Itim', cursive",
     fontSize: '4em',
+    color: '#0f0f22',
   },
   subtitle: {
     fontFamily: "'Open Sans', sans-serif",
