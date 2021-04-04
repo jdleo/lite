@@ -12,10 +12,10 @@ export default function LinkInput() {
   return (
     <Container style={{ ...styles.container, ...(width > 500 ? { width: '60%' } : { width: '90%' }) }}>
       <Row style={styles.row}>
-        <Col xs={10}>
+        <Col xs={9}>
           <input placeholder={'Paste your link here...'} style={styles.input} />
         </Col>
-        <Col xs={2}>
+        <Col xs={3}>
           <button style={styles.button}>Lite!</button>
         </Col>
       </Row>
@@ -44,7 +44,7 @@ const styles = {
     borderBottomLeftRadius: 8,
     fontFamily: "'Open Sans', sans-serif",
     fontWeight: 500,
-    fontSize: '1.3em',
+    fontSize: '1.4em',
     color: '#9e9e9e',
   },
   button: {
@@ -55,5 +55,9 @@ const styles = {
     border: 'none',
     borderBottomRightRadius: 8,
     borderTopRightRadius: 8,
+    fontFamily: "'Open Sans', sans-serif",
+    fontWeight: 700,
+    fontSize: '1.3em',
+    color: '#0f0f22',
   },
 };
