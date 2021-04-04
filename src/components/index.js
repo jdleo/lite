@@ -1,3 +1,4 @@
 import Navbar from './Navbar';
+import Title from './Title';
 
-export { Navbar };
+export { Navbar, Title };
