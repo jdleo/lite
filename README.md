@@ -1,70 +1,54 @@
-# Getting Started with Create React App
+# lite.fyi
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Lite.fyi is a very micro link shortener, with all the clutter taken away. It does what it says it does (shortens links,
+duh).  
+This service is ready to be deployed out of the box with Netlify, and is designed to work with Netlify (although it
+wouldn't be much work porting it elsewhere). If you don't have Netlify insalled, check it out
+[here](https://docs.netlify.com/cli/get-started/)
 
-## Available Scripts
+[![Deploy](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/jdleo/lite)
 
-In the project directory, you can run:
+## dev
 
-### `yarn start`
+1. clone
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```
+git clone git@github.com:jdleo/lite.git
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+2. add your firebase service account key to a new .env file in root
 
-### `yarn test`
+```
+FIREBASE_SERVICE_ACCOUNT=xxxxx
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+After you've made a new Firebase app, enabled Firestore, go to `Settings > Service Accounts` if you're unsure where to
+go.
 
-### `yarn build`
+3. start dev server
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+netlify dev
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## prod (without deploy button)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. create new netlify app, and set a new environment variable for your site, for `FIREBASE_SERVICE_ACCOUNT`, where its
+   equal to the JSON string of your Firebase Service Account key.
+2. deploy your site
 
-### `yarn eject`
+```
+netlify deploy --prod
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## test
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+yarn run test
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## build
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```
+yarn run build
+```
