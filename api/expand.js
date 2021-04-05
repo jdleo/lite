@@ -1,10 +1,9 @@
 const admin = require('firebase-admin');
 
-// load environment variables
-require('dotenv').config();
-
 // initialize firebase admin
 if (admin.apps.length === 0) {
+  // load environment variables
+  require('dotenv').config();
   admin.initializeApp({
     credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
   });
