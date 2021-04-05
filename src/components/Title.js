@@ -1,7 +1,7 @@
 export default function () {
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>lite.fyi</h1>
+      <h1 style={styles.title}>{process.env['APP_NAME'] ?? 'lite.fyi'}</h1>
       <p style={styles.subtitle}>
         Link shorteners are too complicated.
         <br /> This one just makes your links shorter.

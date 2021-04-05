@@ -36,7 +36,7 @@ export default function NavbarWrapper() {
   return (
     <Navbar style={width > 500 ? styles.navbarBig : {}} className="navbar-main">
       <Navbar.Brand href="/" className="navbar-brand" style={styles.navbarBrand}>
-        lite.fyi
+        {process.env['APP_NAME'] ?? 'lite.fyi'}
       </Navbar.Brand>
       <Navbar.Toggle />
       <Navbar.Collapse className="justify-content-end navbar-links">
