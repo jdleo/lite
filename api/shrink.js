@@ -36,8 +36,11 @@ exports.handler = (req, ctx, res) => {
   // generate shortcode
   const code = randomString(5);
 
+  // generate timestamp
+  const created_at = admin.firestore.Timestamp.now();
+
   // post original link and code to database
-  db.collection('links').doc().set({ link, code });
+  db.collection('links').doc().set({ link, code, created_at });
 
   // create full shortlink
   const shortLink = `${req.headers.host}/${code}`;
