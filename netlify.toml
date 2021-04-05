@@ -6,3 +6,6 @@
   from = "/:code"
   to = "/.netlify/functions/expand/:code"
   status = 200
+
+[template.environment]
+  FIREBASE_SERVICE_ACCOUNT = "this is your firebase service account key (look it up)"
