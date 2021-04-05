@@ -6,7 +6,7 @@ import axios from 'axios';
 import useWindowDimensions from '../helpers/useWindowDimensions';
 import isValidURL from '../helpers/isValidURL';
 
-export default function LinkInput({ onChange, link, setShortLink, setError, setLoading }) {
+export default function LinkInput({ onChange, link, setShortLink, setError, setLoading, loading }) {
   // state mgmt
   const { width } = useWindowDimensions();
 
@@ -53,8 +53,8 @@ export default function LinkInput({ onChange, link, setShortLink, setError, setL
           <input placeholder={'Paste your link...'} style={styles.input} value={link} onChange={onChange} />
         </Col>
         <Col xs={4} md={3}>
-          <button style={styles.button} onClick={() => handleShorten()}>
-            Lite!
+          <button style={styles.button} onClick={() => handleShorten()} disabled={loading}>
+            {loading ? '...' : 'Lite!'}
           </button>
         </Col>
       </Row>

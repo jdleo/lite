@@ -20,6 +20,7 @@ function App() {
         onChange={e => setLink(e.target.value)}
         setShortLink={setShortLink}
         setError={setError}
+        loading={loading}
         setLoading={setLoading}
       />
       {loading && <Spinner />}
