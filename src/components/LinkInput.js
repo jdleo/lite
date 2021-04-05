@@ -10,6 +10,8 @@ export default function LinkInput({ onChange, link, setShortLink, setError, setL
   // state mgmt
   const { width } = useWindowDimensions();
 
+  const timer = ms => new Promise(resolve => setTimeout(resolve, ms));
+
   // helper function for handling link shortener button
   const handleShorten = async () => {
     // validate url
@@ -17,6 +19,10 @@ export default function LinkInput({ onChange, link, setShortLink, setError, setL
       // clear error (if any), and set loading
       setError('');
       setLoading(true);
+      setShortLink('');
+
+      // smol delay
+      await timer(250);
 
       // make post request
       const res = await axios.post('.netlify/functions/shrink', { link: link.trim() });
