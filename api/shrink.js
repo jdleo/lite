@@ -1,10 +1,8 @@
 const admin = require('firebase-admin');
 
-// load environment variables
-require('dotenv').config();
-
 // initialize firebase admin
 if (admin.apps.length === 0) {
+  require('dotenv').config();
   admin.initializeApp({
     credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
   });
@@ -36,8 +34,11 @@ exports.handler = (req, ctx, res) => {
   // generate shortcode
   const code = randomString(5);
 
-  // post original link and code to database
-  db.collection('links').doc().set({ link, code });
+  // generate timestamp
+  const created_at = admin.firestore.Timestamp.now();
+
+  // post payload to database
+  db.collection('links').doc().set({ link, code, created_at });
 
   // create full shortlink
   const shortLink = `${req.headers.host}/${code}`;

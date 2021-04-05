@@ -16,7 +16,13 @@ wouldn't be much work porting it elsewhere). If you don't have Netlify insalled,
 git clone git@github.com:jdleo/lite.git
 ```
 
-2. add your firebase service account key to a new .env file in root
+2. install dependencies
+
+```
+yarn
+```
+
+3. add your firebase service account key to a new .env file in root
 
 ```
 FIREBASE_SERVICE_ACCOUNT=xxxxx
@@ -25,7 +31,7 @@ FIREBASE_SERVICE_ACCOUNT=xxxxx
 After you've made a new Firebase app, enabled Firestore, go to `Settings > Service Accounts` if you're unsure where to
 go.
 
-3. start dev server
+4. start dev server
 
 ```
 netlify dev
