@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './App.css';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 
 import { Navbar, Title, LinkInput, LinkOutput, Wave, Error, Spinner } from './components';
 
@@ -21,7 +22,7 @@ function App() {
         setError={setError}
         setLoading={setLoading}
       />
-      <Spinner loading={loading} />
+      {loading && <Spinner />}
       {error !== '' && <Error error={error} />}
       {shortLink !== '' && <LinkOutput shortLink={shortLink} setShortLink={setShortLink} />}
       <Wave />
