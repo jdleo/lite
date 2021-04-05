@@ -7,7 +7,7 @@ import useWindowDimensions from '../helpers/useWindowDimensions';
 import randomString from '../helpers/randomString';
 import isValidURL from '../helpers/isValidURL';
 
-export default function LinkInput({ onChange, link, setShortLink, setError }) {
+export default function LinkInput({ onChange, link, setShortLink, setError, setLoading }) {
   // state mgmt
   const { _, width } = useWindowDimensions();
 
@@ -18,17 +18,22 @@ export default function LinkInput({ onChange, link, setShortLink, setError }) {
       // make post request
       const res = await axios.post('.netlify/functions/shrink', { link: link.trim() });
 
+      // clear error (if any), and set loading
+      setError('');
+      setLoading(true);
+
       // error check
       if (res.data) {
         if (res.data.success) {
-          // clear error (if any)
-          setError('');
           setShortLink(res.data.shortLink);
+          setLoading(false);
         } else {
           // set error (if any)
           setError(res.data.error);
+          setLoading(false);
         }
       } else {
+        setLoading(false);
         setError(res.data);
       }
     } else {

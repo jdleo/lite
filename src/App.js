@@ -8,7 +8,7 @@ function App() {
   const [link, setLink] = useState('');
   const [shortLink, setShortLink] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   return (
     <>
