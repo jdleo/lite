@@ -1,13 +1,13 @@
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import useWindowDimensions from '../helpers/useWindowDimensions';
 
 export default function NavbarWrapper() {
   // state mgmt
   const [darkMode, setDarkMode] = useState(0);
-  const { _, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   // toggle light/dark mode
   const toggleDarkMode = e => {

@@ -1,4 +1,4 @@
-export default function () {
+export default function Title() {
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>{process.env['APP_NAME'] ?? 'lite.fyi'}</h1>

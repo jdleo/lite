@@ -4,12 +4,11 @@ import Col from 'react-bootstrap/Col';
 import axios from 'axios';
 
 import useWindowDimensions from '../helpers/useWindowDimensions';
-import randomString from '../helpers/randomString';
 import isValidURL from '../helpers/isValidURL';
 
 export default function LinkInput({ onChange, link, setShortLink, setError, setLoading }) {
   // state mgmt
-  const { _, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   // helper function for handling link shortener button
   const handleShorten = async () => {

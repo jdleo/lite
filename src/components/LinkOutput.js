@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function LinkOutput({ shortLink, setShortLink }) {
   // state mgmt
-  const { _, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const [isCopying, setIsCopying] = useState(false);
 
   // helper method to handle when container is tapped (should copy text)
@@ -31,7 +31,7 @@ export default function LinkOutput({ shortLink, setShortLink }) {
 
     // try to copy
     try {
-      var successful = document.execCommand('copy');
+      document.execCommand('copy');
     } catch (err) {}
 
     // show copied to user, and get temp text
