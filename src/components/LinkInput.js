@@ -14,12 +14,12 @@ export default function LinkInput({ onChange, link, setShortLink, setError, setL
   const handleShorten = async () => {
     // validate url
     if (isValidURL(link.trim())) {
-      // make post request
-      const res = await axios.post('.netlify/functions/shrink', { link: link.trim() });
-
       // clear error (if any), and set loading
       setError('');
       setLoading(true);
+
+      // make post request
+      const res = await axios.post('.netlify/functions/shrink', { link: link.trim() });
 
       // error check
       if (res.data) {
