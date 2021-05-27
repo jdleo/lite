@@ -1,8 +1,15 @@
-export default function Error({ error }) {
+import { useGlobal } from 'reactn';
+
+export default function Error() {
+  // get global hook for error
+  const [error] = useGlobal('error');
+
   return (
-    <div style={styles.container}>
-      <span style={styles.span}>Error: {error}</span>
-    </div>
+    error !== '' && (
+      <div style={styles.container}>
+        <span style={styles.span}>Error: {error}</span>
+      </div>
+    )
   );
 }
 

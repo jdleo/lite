@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useGlobal } from 'reactn';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -6,10 +7,11 @@ import useWindowDimensions from '../helpers/useWindowDimensions';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export default function LinkOutput({ shortLink, setShortLink }) {
+export default function LinkOutput() {
   // state mgmt
   const { width } = useWindowDimensions();
   const [isCopying, setIsCopying] = useState(false);
+  const [shortLink, setShortLink] = useGlobal('shortLink');
 
   // helper method to handle when container is tapped (should copy text)
   const handleCopy = () => {
@@ -50,19 +52,21 @@ export default function LinkOutput({ shortLink, setShortLink }) {
   };
 
   return (
-    <Container
-      style={{ ...styles.container, ...(width > 500 ? { width: '40%' } : { width: '80%' }) }}
-      onClick={() => handleCopy()}
-    >
-      <Row style={styles.row}>
-        <Col xs={9} className="align-self-center text-center" style={styles.linkContainer}>
-          <span>{shortLink}</span>
-        </Col>
-        <Col xs={3} className="align-self-center text-center" style={styles.copyContainer}>
-          <FontAwesomeIcon icon={faCopy} />
-        </Col>
-      </Row>
-    </Container>
+    shortLink !== '' && (
+      <Container
+        style={{ ...styles.container, ...(width > 500 ? { width: '40%' } : { width: '80%' }) }}
+        onClick={() => handleCopy()}
+      >
+        <Row style={styles.row}>
+          <Col xs={9} className="align-self-center text-center" style={styles.linkContainer}>
+            <span>{shortLink}</span>
+          </Col>
+          <Col xs={3} className="align-self-center text-center" style={styles.copyContainer}>
+            <FontAwesomeIcon icon={faCopy} />
+          </Col>
+        </Row>
+      </Container>
+    )
   );
 }
 

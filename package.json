@@ -19,6 +19,7 @@
     "react-loader-spinner": "^4.0.0",
     "react-scripts": "4.0.3",
     "react-wavify": "^1.5.2",
+    "reactn": "^2.2.7",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
