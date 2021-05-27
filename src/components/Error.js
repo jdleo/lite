@@ -1,17 +1,15 @@
-import { MainContextConsumer } from '../context/main-context';
+import { useGlobal } from 'reactn';
 
-export default function Error({ error }) {
+export default function Error() {
+  // get global hook for error
+  const [error] = useGlobal('error');
+
   return (
-    <MainContextConsumer>
-      {ctx =>
-        ctx.state.error !== '' && (
-          <div style={styles.container}>
-            {console.info(ctx.state.error)}
-            <span style={styles.span}>Error: {ctx.state.error}</span>
-          </div>
-        )
-      }
-    </MainContextConsumer>
+    error !== '' && (
+      <div style={styles.container}>
+        <span style={styles.span}>Error: {error}</span>
+      </div>
+    )
   );
 }
 

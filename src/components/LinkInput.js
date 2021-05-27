@@ -2,13 +2,20 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import axios from 'axios';
+import { useGlobal } from 'reactn';
 
 import useWindowDimensions from '../helpers/useWindowDimensions';
 import isValidURL from '../helpers/isValidURL';
 
-export default function LinkInput({ onChange, link, setShortLink, setError, setLoading, loading }) {
+export default function LinkInput() {
   // state mgmt
   const { width } = useWindowDimensions();
+  // eslint-disable-next-line no-unused-vars
+  const [error, setError] = useGlobal('error');
+  const [link, setLink] = useGlobal('link');
+  const [loading, setLoading] = useGlobal('loading');
+  // eslint-disable-next-line no-unused-vars
+  const [shortLink, setShortLink] = useGlobal('shortLink');
 
   const timer = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -50,7 +57,12 @@ export default function LinkInput({ onChange, link, setShortLink, setError, setL
     <Container style={{ ...styles.container, ...(width > 500 ? { width: '60%' } : { width: '90%' }) }}>
       <Row style={styles.row}>
         <Col xs={8} md={9}>
-          <input placeholder={'Paste your link...'} style={styles.input} value={link} onChange={onChange} />
+          <input
+            placeholder={'Paste your link...'}
+            style={styles.input}
+            value={link}
+            onChange={e => setLink(e.target.value)}
+          />
         </Col>
         <Col xs={4} md={3}>
           <button style={styles.button} onClick={() => handleShorten()} disabled={loading}>

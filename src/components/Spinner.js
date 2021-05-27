@@ -1,10 +1,16 @@
 import Loader from 'react-loader-spinner';
+import { useGlobal } from 'reactn';
 
-export default function Spinner({ loading }) {
+export default function Spinner() {
+  // state mgmt
+  const [loading] = useGlobal('loading');
+
   return (
-    <div style={styles.container}>
-      <Loader type={'Circles'} color={'#ff9bf5'} height={100} width={100} style={{ margin: 'auto' }} />
-    </div>
+    loading && (
+      <div style={styles.container}>
+        <Loader type={'Circles'} color={'#ff9bf5'} height={100} width={100} style={{ margin: 'auto' }} />
+      </div>
+    )
   );
 }
 

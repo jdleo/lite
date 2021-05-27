@@ -1,9 +1,18 @@
 import React from 'react';
+import { setGlobal } from 'reactn';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.css';
+
+// set global, default state
+setGlobal({
+  error: '',
+  link: '',
+  loading: false,
+  shortLink: '',
+});
 
 ReactDOM.render(
   <React.StrictMode>
