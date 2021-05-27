@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MainContextProvider } from './context/main-context';
 import './App.css';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 
@@ -13,20 +14,22 @@ function App() {
 
   return (
     <>
-      <Navbar />
-      <Title />
-      <LinkInput
-        link={link}
-        onChange={e => setLink(e.target.value)}
-        setShortLink={setShortLink}
-        setError={setError}
-        loading={loading}
-        setLoading={setLoading}
-      />
-      {loading && <Spinner />}
-      {error !== '' && <Error error={error} />}
-      {shortLink !== '' && <LinkOutput shortLink={shortLink} setShortLink={setShortLink} />}
-      <Wave />
+      <MainContextProvider>
+        <Navbar />
+        <Title />
+        <LinkInput
+          link={link}
+          onChange={e => setLink(e.target.value)}
+          setShortLink={setShortLink}
+          setError={setError}
+          loading={loading}
+          setLoading={setLoading}
+        />
+        {loading && <Spinner />}
+        <Error />
+        {shortLink !== '' && <LinkOutput shortLink={shortLink} setShortLink={setShortLink} />}
+        <Wave />
+      </MainContextProvider>
     </>
   );
 }
