@@ -1,8 +1,17 @@
+import { MainContextConsumer } from '../context/main-context';
+
 export default function Error({ error }) {
   return (
-    <div style={styles.container}>
-      <span style={styles.span}>Error: {error}</span>
-    </div>
+    <MainContextConsumer>
+      {ctx =>
+        ctx.state.error !== '' && (
+          <div style={styles.container}>
+            {console.info(ctx.state.error)}
+            <span style={styles.span}>Error: {ctx.state.error}</span>
+          </div>
+        )
+      }
+    </MainContextConsumer>
   );
 }
 
