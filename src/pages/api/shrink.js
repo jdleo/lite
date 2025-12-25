@@ -33,10 +33,18 @@ export default async function handler(req, res) {
 
   try {
     const url = new URL(link);
+    // 4. Protocol Check
     if (url.protocol !== 'http:' && url.protocol !== 'https:') {
       return res.status(400).json({ success: false, error: 'Only http and https protocols are supported' });
     }
-    // Enforce dot in hostname (basic TLD check) unless localhost
+
+    // 5. SSRF Protection: Block private/internal IPs
+    const privateIPRegex = /^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|169\.254\.)/;
+    if (privateIPRegex.test(url.hostname)) {
+      return res.status(400).json({ success: false, error: 'Access to internal or private URLs is restricted' });
+    }
+
+    // Enforce dot in hostname (basic TLD check) unless localhost (blocked anyway)
     if (!url.hostname.includes('.') && url.hostname !== 'localhost') {
       return res.status(400).json({ success: false, error: 'Invalid URL format' });
     }

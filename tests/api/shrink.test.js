@@ -73,6 +73,21 @@ describe('Handler: /api/shrink', () => {
         expect(JSON.parse(res._getData()).error).toMatch(/protocol/);
     });
 
+    it('should return 400 if link is an internal IP (SSRF protection)', async () => {
+        const internalHosts = ['127.0.0.1', '192.168.1.1', '169.254.169.254', 'localhost'];
+        for (const host of internalHosts) {
+            const { req, res } = httpMocks.createMocks({
+                method: 'POST',
+                body: { link: `http://${host}/metadata` },
+            });
+
+            await handler(req, res);
+
+            expect(res._getStatusCode()).toBe(400);
+            expect(JSON.parse(res._getData()).error).toMatch(/restricted/i);
+        }
+    });
+
     it('should return 400 if link is too long', async () => {
         const longLink = 'https://example.com/' + 'a'.repeat(2001);
         const { req, res } = httpMocks.createMocks({
