@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 
 function getWindowDimensions() {
+  if (typeof window === 'undefined') {
+    return { width: 0, height: 0 };
+  }
   const { innerWidth: width, innerHeight: height } = window;
   return {
     width,
@@ -16,8 +19,12 @@ export default function useWindowDimensions() {
       setWindowDimensions(getWindowDimensions());
     }
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', handleResize);
+      // Set initial dimensions in case they were 0 from SSR
+      setWindowDimensions(getWindowDimensions());
+      return () => window.removeEventListener('resize', handleResize);
+    }
   }, []);
 
   return windowDimensions;

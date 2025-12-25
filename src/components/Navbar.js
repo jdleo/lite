@@ -1,5 +1,4 @@
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
+import { Navbar, Nav } from 'react-bootstrap';
 import { useState } from 'react';
 
 import useWindowDimensions from '../helpers/useWindowDimensions';

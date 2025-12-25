@@ -1,17 +1,8 @@
-import Wave from 'react-wavify';
+
 
 export default function WaveWrapper() {
   return (
-    <Wave
-      fill="#ff9bf5"
-      paused={false}
-      options={{
-        height: 20,
-        amplitude: 20,
-        speed: 0.3,
-        points: 5,
-      }}
-      style={{ position: 'fixed', bottom: -100 }}
-    />
+    <div style={{ position: 'fixed', bottom: 0, width: '100%', height: '100px', backgroundColor: '#ff9bf5' }}>
+    </div>
   );
 }

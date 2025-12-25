@@ -1,11 +1,8 @@
 import { useState } from 'react';
 import { useGlobal } from 'reactn';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import { Container, Row, Col } from 'react-bootstrap';
 import useWindowDimensions from '../helpers/useWindowDimensions';
-import { faCopy } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 export default function LinkOutput() {
   // state mgmt
@@ -34,7 +31,7 @@ export default function LinkOutput() {
     // try to copy
     try {
       document.execCommand('copy');
-    } catch (err) {}
+    } catch (err) { }
 
     // show copied to user, and get temp text
     setIsCopying(true);
@@ -62,7 +59,7 @@ export default function LinkOutput() {
             <span>{shortLink}</span>
           </Col>
           <Col xs={3} className="align-self-center text-center" style={styles.copyContainer}>
-            <FontAwesomeIcon icon={faCopy} />
+            <span>Copy</span>
           </Col>
         </Row>
       </Container>
