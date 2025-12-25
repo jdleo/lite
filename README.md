@@ -60,8 +60,15 @@ pnpm run dev
 3. Ensure the Neon integration is connected or `DATABASE_URL` is set in Environment Variables.
 4. That's it. Vercel handles the rest.
 
-## build
-
-```
 pnpm run build
 ```
+
+## Security & Performance
+
+Lite.fyi takes care of the following:
+
+- **SSRF Protection**: Rejects private and internal IP addresses (e.g., `127.0.0.1`, `169.254.169.254`) to prevent internal network probing.
+- **Edge Caching**: Redirects and statistics are cached at Vercel's Edge Network, significantly reducing database hits and latency.
+- **DDoS Mitigation**: Implements negative caching for 404s and blocks circular redirect loops.
+- **Secure RNG**: Uses cryptographically secure alphanumeric strings for short codes.
+- **Validation**: Enforces strict protocol (HTTP/HTTPS only) and URL format checks.
