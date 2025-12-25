@@ -60,6 +60,7 @@ pnpm run dev
 3. Ensure the Neon integration is connected or `DATABASE_URL` is set in Environment Variables.
 4. That's it. Vercel handles the rest.
 
+```
 pnpm run build
 ```
 
