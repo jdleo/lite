@@ -1,0 +1,12 @@
+{
+    "rewrites": [
+        {
+            "source": "/api/shrink",
+            "destination": "/api/shrink"
+        },
+        {
+            "source": "/:code",
+            "destination": "/api/expand?code=:code"
+        }
+    ]
+}

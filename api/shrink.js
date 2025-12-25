@@ -27,9 +27,10 @@ function randomString(n) {
     .join('');
 }
 
-exports.handler = (req, ctx, res) => {
+module.exports = async (req, res) => {
   // parse json body
-  const { link } = JSON.parse(req.body);
+  // Vercel parses JSON body automatically if Content-Type is application/json
+  const { link } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
   // generate shortcode
   const code = randomString(5);
@@ -38,7 +39,7 @@ exports.handler = (req, ctx, res) => {
   const created_at = admin.firestore.Timestamp.now();
 
   // post payload to database
-  db.collection('links').doc().set({ link, code, created_at });
+  await db.collection('links').doc().set({ link, code, created_at });
 
   // create full shortlink
   const shortLink = `${req.headers.host}/${code}`;
@@ -49,5 +50,5 @@ exports.handler = (req, ctx, res) => {
     shortLink,
   };
 
-  res(null, { statusCode: 200, body: JSON.stringify(data) });
+  res.status(200).json(data);
 };

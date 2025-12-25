@@ -32,7 +32,7 @@ export default function LinkInput() {
       await timer(250);
 
       // make post request
-      const res = await axios.post('.netlify/functions/shrink', { link: link.trim() });
+      const res = await axios.post('/api/shrink', { link: link.trim() });
 
       // error check
       if (res.data) {

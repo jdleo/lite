@@ -12,12 +12,9 @@ if (admin.apps.length === 0) {
 // db reference
 const db = admin.firestore();
 
-exports.handler = async (req, ctx, res) => {
-  // get path
-  const { path } = req;
-
-  // get code
-  const code = path.replace('/', '');
+module.exports = async (req, res) => {
+  // get code from query params (via Vercel rewrite)
+  const { code } = req.query;
 
   // look up code in database
   const links = await db.collection('links').where('code', '==', code).get();
@@ -31,9 +28,9 @@ exports.handler = async (req, ctx, res) => {
     if (!link.startsWith('http')) link = 'https://' + link;
 
     // 301 to link of matching code
-    res(null, { statusCode: 301, headers: { Location: link } });
+    res.redirect(301, link);
   } else {
     // just 301 to homepage
-    res(null, { statusCode: 301, headers: { Location: 'http://' + req.headers.host } });
+    res.redirect(301, '/');
   }
 };
