@@ -23,6 +23,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "jest",
     "lint": "next lint"
   },
   "browserslist": {
@@ -36,5 +37,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
+    "node-mocks-http": "^1.17.2",
+    "ts-jest": "^29.4.6"
   }
 }
