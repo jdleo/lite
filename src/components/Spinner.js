@@ -1,25 +1,13 @@
-
 import { useGlobal } from 'reactn';
 
 export default function Spinner() {
-  // state mgmt
   const [loading] = useGlobal('loading');
 
+  if (!loading) return null;
+
   return (
-    loading && (
-      <div style={styles.container}>
-        <div className="spinner-border text-primary" role="status">
-          <span className="sr-only">Loading...</span>
-        </div>
-      </div>
-    )
+    <div className="spinner-container">
+      <div className="premium-spinner" role="status"></div>
+    </div>
   );
 }
-
-const styles = {
-  container: {
-    margin: 'auto',
-    marginTop: 50,
-    textAlign: 'center',
-  },
-};

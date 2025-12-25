@@ -1,86 +1,55 @@
 import { useState } from 'react';
 import { useGlobal } from 'reactn';
-import { Container, Row, Col } from 'react-bootstrap';
-import useWindowDimensions from '../helpers/useWindowDimensions';
-
 
 export default function LinkOutput() {
-  // state mgmt
-  const { width } = useWindowDimensions();
   const [isCopying, setIsCopying] = useState(false);
   const [shortLink, setShortLink] = useGlobal('shortLink');
 
-  // helper method to handle when container is tapped (should copy text)
   const handleCopy = () => {
-    if (isCopying) return;
+    if (isCopying || !shortLink) return;
 
-    // create temporary text area
-    var textArea = document.createElement('textarea');
-    textArea.value = shortLink;
-
-    // avoid scrolling to bottom
-    textArea.style.top = '0';
-    textArea.style.left = '0';
-    textArea.style.position = 'fixed';
-
-    // focus and select
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    // try to copy
-    try {
+    // Modern clipboard API
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shortLink).then(() => {
+        setIsCopying(true);
+        setTimeout(() => setIsCopying(false), 2000);
+      });
+    } else {
+      // Fallback
+      const textArea = document.createElement('textarea');
+      textArea.value = shortLink;
+      document.body.appendChild(textArea);
+      textArea.select();
       document.execCommand('copy');
-    } catch (err) { }
-
-    // show copied to user, and get temp text
-    setIsCopying(true);
-    const temp = shortLink;
-    setShortLink('Copied!');
-
-    // remove temp text area
-    document.body.removeChild(textArea);
-
-    // after 1 second, remove copied text
-    setTimeout(() => {
-      setIsCopying(false);
-      setShortLink(temp);
-    }, 1000);
+      document.body.removeChild(textArea);
+      setIsCopying(true);
+      setTimeout(() => setIsCopying(false), 2000);
+    }
   };
 
+  if (!shortLink) return null;
+
   return (
-    shortLink !== '' && (
-      <Container
-        style={{ ...styles.container, ...(width > 500 ? { width: '40%' } : { width: '80%' }) }}
-        onClick={() => handleCopy()}
-      >
-        <Row style={styles.row}>
-          <Col xs={9} className="align-self-center text-center" style={styles.linkContainer}>
-            <span>{shortLink}</span>
-          </Col>
-          <Col xs={3} className="align-self-center text-center" style={styles.copyContainer}>
-            <span>Copy</span>
-          </Col>
-        </Row>
-      </Container>
-    )
+    <div className="text-center" style={{ marginTop: '2rem' }}>
+      <div className="result-box float-anim" onClick={handleCopy}>
+        <div style={{ fontWeight: 700, fontSize: '1.4rem', letterSpacing: '-0.01em' }}>
+          {isCopying ? 'Link Copied!' : shortLink}
+        </div>
+        <div
+          style={{
+            background: 'rgba(0,0,0,0.1)',
+            padding: '8px 16px',
+            borderRadius: '12px',
+            fontSize: '0.9rem',
+            fontWeight: 800
+          }}
+        >
+          {isCopying ? '✅' : 'COPY'}
+        </div>
+      </div>
+      <p style={{ marginTop: '1rem', opacity: 0.5, fontWeight: 500 }}>
+        Tap the box to copy your new link
+      </p>
+    </div>
   );
 }
-
-const styles = {
-  container: {
-    backgroundColor: '#ff9bf5',
-    margin: 'auto',
-    marginTop: 50,
-    height: 70,
-    borderRadius: 8,
-    padding: 0,
-    cursor: 'pointer',
-  },
-  col: { textAlign: 'center', verticalAlign: 'middle' },
-  linkContainer: { fontFamily: "'Open Sans', sans-serif", fontWeight: 600, fontSize: '1.4em' },
-  copyContainer: {
-    fontSize: '1.4em',
-  },
-  row: { height: '100%', color: '#0f0f22' },
-};

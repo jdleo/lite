@@ -1,12 +1,10 @@
 # lite.fyi
 
-Lite.fyi is a very micro link shortener, with all the clutter taken away. It does what it says it does (shortens links,
-duh).  
-This service is ready to be deployed out of the box with Netlify, and is designed to work with Netlify (although it
-wouldn't be much work porting it elsewhere). If you don't have Netlify insalled, check it out
-[here](https://docs.netlify.com/cli/get-started/)
+Lite.fyi is a very micro link shortener, with all the clutter taken away. It does what it says it does (shortens links, duh).
 
-[![Deploy](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/jdleo/lite)
+This service is ready to be deployed out of the box with [Vercel](https://vercel.com), and is designed to work with [Neon](https://neon.tech) (Serverless Postgres) for the database.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjdleo%2Flite)
 
 ## dev
 
@@ -19,42 +17,51 @@ git clone git@github.com:jdleo/lite.git
 2. install dependencies
 
 ```
-yarn
+pnpm install
 ```
 
-3. add your firebase service account key to a new .env file in root
+3. set up neon database
 
-```
-FIREBASE_SERVICE_ACCOUNT=xxxxx
-```
+This project uses Neon (Serverless Postgres). You need to link a database.
 
-After you've made a new Firebase app, enabled Firestore, go to `Settings > Service Accounts` if you're unsure where to
-go.
+**Via Vercel (Recommended):**
+- Import the project to Vercel.
+- Go to the "Storage" tab in your Vercel project dashboard.
+- Select "Neon" and connect/create a new database. This will auto-populate your `DATABASE_URL`.
+
+**Manual:**
+- Create a project on [Neon](https://neon.tech).
+- Run this SQL command to create the required table:
+  ```sql
+  CREATE TABLE IF NOT EXISTS links (
+    id SERIAL PRIMARY KEY,
+    url TEXT NOT NULL,
+    code TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  ```
+- Add your connection string to `.env.local`:
+  ```
+  DATABASE_URL=postgres://user:password@endpoint.neon.tech/neondb
+  ```
 
 4. start dev server
 
 ```
-netlify dev
+pnpm run dev
 ```
 
-## prod (without deploy button)
+*Note: To run the full stack locally (with API rewrites working perfect), use `vercel dev` if you have the Vercel CLI installed.*
 
-1. create new netlify app, and set a new environment variable for your site, for `FIREBASE_SERVICE_ACCOUNT`, where its
-   equal to the JSON string of your Firebase Service Account key.
-2. deploy your site
+## prod
 
-```
-netlify deploy --prod
-```
-
-## test
-
-```
-yarn run test
-```
+1. Push to GitHub.
+2. Import project into Vercel.
+3. Ensure the Neon integration is connected or `DATABASE_URL` is set in Environment Variables.
+4. That's it. Vercel handles the rest.
 
 ## build
 
 ```
-yarn run build
+pnpm run build
 ```

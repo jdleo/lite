@@ -1,61 +1,48 @@
-import { Navbar, Nav } from 'react-bootstrap';
-import { useState } from 'react';
-
-import useWindowDimensions from '../helpers/useWindowDimensions';
+import { Container } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
 
 export default function NavbarWrapper() {
-  // state mgmt
-  const [darkMode, setDarkMode] = useState(0);
-  const { width } = useWindowDimensions();
+  const [darkMode, setDarkMode] = useState(false);
 
-  // toggle light/dark mode
-  const toggleDarkMode = e => {
-    e.preventDefault();
+  useEffect(() => {
+    // Check system preference on load
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setDarkMode(true);
+    }
+  }, []);
 
-    // get elements needed
-    const navbarBrand = document.getElementsByClassName('navbar-brand');
-    const anchors = document.getElementsByTagName('a');
-    const headers = document.getElementsByTagName('h1');
-    const paragraphs = document.getElementsByTagName('p');
-
-    // set global styles
-    document.body.style.backgroundColor = darkMode === 1 ? '#f5f8ff' : '#0f0f22';
-    [...navbarBrand, ...anchors, ...headers].forEach(element => {
-      element.style.color = darkMode === 1 ? '#0f0f22' : '#f5f8ff';
-    });
-
-    [...paragraphs].forEach(element => {
-      element.style.color = darkMode === 1 ? '#636467' : '#9E9EA6';
-    });
-
-    // toggle
-    setDarkMode(darkMode ^ 1);
-  };
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, [darkMode]);
 
   return (
-    <Navbar style={width > 500 ? styles.navbarBig : {}} className="navbar-main">
-      <Navbar.Brand href="/" className="navbar-brand" style={styles.navbarBrand}>
-        {process.env['APP_NAME'] ?? 'lite.fyi'}
-      </Navbar.Brand>
-      <Navbar.Toggle />
-      <Navbar.Collapse className="justify-content-end navbar-links">
-        <Nav.Link href="#" onClick={e => toggleDarkMode(e)} style={styles.navbarLink}>
-          {darkMode === 1 ? 'Light Mode' : 'Dark Mode'}
-        </Nav.Link>
-        <Nav.Link href="https://github.com/jdleo/lite" target="_blank" style={styles.navbarLink}>
-          Github
-        </Nav.Link>
-      </Navbar.Collapse>
-    </Navbar>
+    <nav className="nav-container">
+      <Container className="d-flex align-items-center justify-content-between">
+        <a href="/" className="nav-brand">
+          {process.env['APP_NAME'] ?? 'lite.fyi'}
+        </a>
+        <div className="d-flex align-items-center">
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="nav-link border-0 background-none cursor-pointer"
+            style={{ background: 'none', cursor: 'pointer' }}
+          >
+            {darkMode ? '☀️' : '🌙'}
+          </button>
+          <a
+            href="https://github.com/jdleo/lite"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-link"
+          >
+            GitHub
+          </a>
+        </div>
+      </Container>
+    </nav>
   );
 }
-
-const styles = {
-  navbarBig: { paddingLeft: 200, paddingRight: 200 },
-  navbarBrand: {
-    color: '#0f0f22',
-  },
-  navbarLink: {
-    color: '#0f0f22',
-  },
-};

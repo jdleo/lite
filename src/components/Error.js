@@ -1,29 +1,32 @@
 import { useGlobal } from 'reactn';
 
 export default function Error() {
-  // get global hook for error
   const [error] = useGlobal('error');
 
+  if (!error) return null;
+
   return (
-    error !== '' && (
-      <div style={styles.container}>
-        <span style={styles.span}>Error: {error}</span>
+    <div style={styles.container}>
+      <div style={styles.badge}>
+        {error}
       </div>
-    )
+    </div>
   );
 }
 
 const styles = {
   container: {
-    marginTop: 40,
-    width: '100%',
-    textAlign: 'center',
+    marginTop: '2rem',
+    display: 'flex',
+    justifyContent: 'center',
   },
-  span: {
-    fontFamily: "'Open Sans', sans-serif",
-    fontSize: '1em',
-    marginTop: 30,
-    fontWeight: 600,
+  badge: {
+    background: 'rgba(255, 119, 119, 0.1)',
     color: '#ff7777',
+    padding: '0.75rem 1.5rem',
+    borderRadius: '12px',
+    fontSize: '0.95rem',
+    fontWeight: 600,
+    border: '1px solid rgba(255, 119, 119, 0.2)',
   },
 };

@@ -4,12 +4,12 @@ import 'bootstrap/dist/css/bootstrap.css';
 import '../index.css';
 import '../App.css';
 
-// set global, default state
 setGlobal({
     error: '',
     link: '',
     loading: false,
     shortLink: '',
+    statsCount: 0,
 });
 
 function MyApp({ Component, pageProps }) {

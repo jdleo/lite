@@ -21,7 +21,6 @@ export default function useWindowDimensions() {
 
     if (typeof window !== 'undefined') {
       window.addEventListener('resize', handleResize);
-      // Set initial dimensions in case they were 0 from SSR
       setWindowDimensions(getWindowDimensions());
       return () => window.removeEventListener('resize', handleResize);
     }

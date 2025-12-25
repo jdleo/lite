@@ -1,36 +1,16 @@
-const admin = require('firebase-admin');
+import { neon } from '@neondatabase/serverless';
 
-// initialize firebase admin
-if (admin.apps.length === 0) {
-  // load environment variables
-  require('dotenv').config();
-  admin.initializeApp({
-    credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
-  });
-}
-
-// db reference
-const db = admin.firestore();
-
-module.exports = async (req, res) => {
-  // get code from query params (via Vercel rewrite)
+export default async function handler(req, res) {
   const { code } = req.query;
+  const sql = neon(process.env.DATABASE_URL);
 
-  // look up code in database
-  const links = await db.collection('links').where('code', '==', code).get();
+  const response = await sql`SELECT url FROM links WHERE code = ${code}`;
 
-  // check if we found one
-  if (!links.empty) {
-    // get link
-    let link = links.docs[0].data().link;
-
-    // if link doesnt have protocol, add one (secure by default)
+  if (response && response.length > 0) {
+    let link = response[0].url;
     if (!link.startsWith('http')) link = 'https://' + link;
-
-    // 301 to link of matching code
     res.redirect(301, link);
   } else {
-    // just 301 to homepage
     res.redirect(301, '/');
   }
-};
+}
