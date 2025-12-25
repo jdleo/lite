@@ -58,5 +58,6 @@ describe('Handler: /api/expand', () => {
         await handler(req, res);
 
         expect(res.redirect).toHaveBeenCalledWith(301, '/');
+        expect(res._getHeaders()).toHaveProperty('cache-control', 's-maxage=600');
     });
 });

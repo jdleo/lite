@@ -14,6 +14,8 @@ export default async function handler(req, res) {
     res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate');
     res.redirect(301, link);
   } else {
+    // Negative Caching: cache misses for 10 minutes to prevent DB probing
+    res.setHeader('Cache-Control', 's-maxage=600');
     res.redirect(301, '/');
   }
 }

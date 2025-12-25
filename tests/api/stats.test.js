@@ -26,6 +26,7 @@ describe('Handler: /api/stats', () => {
 
         expect(res._getStatusCode()).toBe(200);
         expect(JSON.parse(res._getData())).toEqual({ count: 42 });
+        expect(res._getHeaders()).toHaveProperty('cache-control', 's-maxage=3600, stale-while-revalidate');
     });
 
     it('should return 500 if database query fails', async () => {

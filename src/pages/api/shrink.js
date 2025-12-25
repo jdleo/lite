@@ -26,6 +26,16 @@ export default async function handler(req, res) {
     link = 'https://' + link;
   }
 
+  // Block self-shortening (loops)
+  try {
+    const urlCheck = new URL(link);
+    if (urlCheck.host === req.headers.host) {
+      return res.status(400).json({ success: false, error: 'Circular links are not allowed' });
+    }
+  } catch (e) {
+    // URL validation happens below
+  }
+
   // 1. Validation
   if (link.length > 2000) {
     return res.status(400).json({ success: false, error: 'Link exceeds 2000 characters' });

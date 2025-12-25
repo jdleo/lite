@@ -49,6 +49,19 @@ describe('Handler: /api/shrink', () => {
         });
     });
 
+    it('should block self-shortening (circular loops)', async () => {
+        const { req, res } = httpMocks.createMocks({
+            method: 'POST',
+            headers: { host: 'lite.fyi' },
+            body: { link: 'https://lite.fyi/abc' },
+        });
+
+        await handler(req, res);
+
+        expect(res._getStatusCode()).toBe(400);
+        expect(JSON.parse(res._getData()).error).toMatch(/Circular links/);
+    });
+
     it('should return 400 if link is invalid URL', async () => {
         const { req, res } = httpMocks.createMocks({
             method: 'POST',
