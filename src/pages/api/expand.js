@@ -9,6 +9,9 @@ export default async function handler(req, res) {
   if (response && response.length > 0) {
     let link = response[0].url;
     if (!link.startsWith('http')) link = 'https://' + link;
+
+    // Enable Vercel Edge Caching (24 hours)
+    res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate');
     res.redirect(301, link);
   } else {
     res.redirect(301, '/');

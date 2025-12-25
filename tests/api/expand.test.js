@@ -29,6 +29,7 @@ describe('Handler: /api/expand', () => {
         await handler(req, res);
 
         expect(res.redirect).toHaveBeenCalledWith(301, 'https://google.com');
+        expect(res._getHeaders()).toHaveProperty('cache-control', 's-maxage=86400, stale-while-revalidate');
     });
 
     it('should not add https if link already has it', async () => {

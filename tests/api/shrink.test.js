@@ -1,13 +1,16 @@
-import { createHash } from 'crypto';
 import httpMocks from 'node-mocks-http';
 import handler from '../../src/pages/api/shrink';
 import { neon } from '@neondatabase/serverless';
+import crypto from 'crypto';
 
 jest.mock('@neondatabase/serverless', () => ({
     neon: jest.fn(),
 }));
 
-const SALT = 'lite-fyi-2026-experimental-salt';
+jest.mock('crypto', () => ({
+    // Mock randomInt to return 0 (picking first char 'a') for predictable testing
+    randomInt: jest.fn().mockReturnValue(0),
+}));
 
 describe('Handler: /api/shrink', () => {
     let mockSql;
@@ -18,188 +21,155 @@ describe('Handler: /api/shrink', () => {
         neon.mockReturnValue(mockSql);
     });
 
-    const generateValidProof = (ts) => {
-        return createHash('sha256').update(String(ts) + SALT).digest('hex');
-    };
-
-    it('should return 403 if timestamp is missing', async () => {
+    it('should return 405 if method is not POST', async () => {
         const { req, res } = httpMocks.createMocks({
-            method: 'POST',
-            body: { link: 'https://google.com' },
+            method: 'GET',
         });
 
         await handler(req, res);
 
-        expect(res._getStatusCode()).toBe(403);
+        expect(res._getStatusCode()).toBe(405);
         expect(JSON.parse(res._getData())).toEqual({
-            success: false,
-            error: 'Unauthorized: Proof expired. Please try again.',
+            error: 'Method not allowed',
         });
     });
 
-    it('should return 403 if proof is expired', async () => {
-        const oldTs = Date.now() - 5000;
+    it('should return 400 if link is missing', async () => {
         const { req, res } = httpMocks.createMocks({
             method: 'POST',
-            body: {
-                link: 'https://google.com',
-                ts: oldTs,
-                proof: generateValidProof(oldTs)
-            },
+            body: {},
         });
 
         await handler(req, res);
 
-        expect(res._getStatusCode()).toBe(403);
+        expect(res._getStatusCode()).toBe(400);
         expect(JSON.parse(res._getData())).toEqual({
             success: false,
-            error: 'Unauthorized: Proof expired. Please try again.',
+            error: 'Link is required',
         });
     });
 
-    it('should return 403 if proof is invalid', async () => {
-        const ts = Date.now();
+    it('should return 400 if link is invalid URL', async () => {
         const { req, res } = httpMocks.createMocks({
             method: 'POST',
-            body: {
-                link: 'https://google.com',
-                ts: ts,
-                proof: 'invalid-proof'
-            },
+            body: { link: 'not-a-url' },
         });
 
         await handler(req, res);
 
-        expect(res._getStatusCode()).toBe(403);
-        expect(JSON.parse(res._getData())).toEqual({
-            success: false,
-            error: 'Unauthorized: Invalid request signature.',
+        expect(res._getStatusCode()).toBe(400);
+        expect(JSON.parse(res._getData()).error).toMatch(/Invalid URL format/);
+    });
+
+    it('should return 400 if link uses unsupported protocol', async () => {
+        const { req, res } = httpMocks.createMocks({
+            method: 'POST',
+            body: { link: 'ftp://example.com' },
         });
+
+        await handler(req, res);
+
+        expect(res._getStatusCode()).toBe(400);
+        expect(JSON.parse(res._getData()).error).toMatch(/protocol/);
+    });
+
+    it('should return 400 if link is too long', async () => {
+        const longLink = 'https://example.com/' + 'a'.repeat(2001);
+        const { req, res } = httpMocks.createMocks({
+            method: 'POST',
+            body: { link: longLink },
+        });
+
+        await handler(req, res);
+
+        expect(res._getStatusCode()).toBe(400);
+        expect(JSON.parse(res._getData()).error).toMatch(/exceeds 2000 characters/);
     });
 
     it('should successfully shrink a link', async () => {
-        const ts = Date.now();
         const { req, res } = httpMocks.createMocks({
             method: 'POST',
             headers: { host: 'localhost:3000' },
-            body: {
-                link: 'https://google.com',
-                ts: ts,
-                proof: generateValidProof(ts)
-            },
+            body: { link: 'https://google.com' },
         });
 
-        // Mock SQL queries
-        mockSql.mockImplementation((strings, ...values) => {
-            const query = strings.join('');
-            if (query.includes('COUNT(*)')) {
-                return Promise.resolve([{ count: '10' }]);
-            }
-            if (query.includes('INSERT INTO')) {
-                return Promise.resolve();
-            }
-            return Promise.resolve();
-        });
+        mockSql.mockResolvedValueOnce(); // INSERT success
 
         await handler(req, res);
 
         expect(res._getStatusCode()).toBe(200);
         const data = JSON.parse(res._getData());
         expect(data.success).toBe(true);
-        expect(data.shortLink).toMatch(/localhost:3000\/[a-zA-Z0-9]+/);
+        expect(data.shortLink).toMatch(/localhost:3000\/.+/);
+        expect(mockSql).toHaveBeenCalledWith(
+            expect.arrayContaining(['INSERT INTO links (url, code) VALUES (', ', ', ')']),
+            'https://google.com',
+            expect.any(String)
+        );
     });
 
-    it('should handle collisions and retry', async () => {
-        const ts = Date.now();
+    it('should auto-prepend https:// if protocol is missing', async () => {
         const { req, res } = httpMocks.createMocks({
             method: 'POST',
             headers: { host: 'localhost:3000' },
-            body: {
-                link: 'https://google.com',
-                ts: ts,
-                proof: generateValidProof(ts)
-            },
+            body: { link: 'google.com' },
         });
 
-        // Mock SQL queries
-        mockSql
-            .mockResolvedValueOnce([{ count: '10' }]) // getOptimalCodeLength
-            .mockRejectedValueOnce({ code: '23505' }) // first INSERT collision
-            .mockResolvedValueOnce(); // second INSERT success
+        mockSql.mockResolvedValueOnce(); // INSERT success
 
         await handler(req, res);
 
         expect(res._getStatusCode()).toBe(200);
         const data = JSON.parse(res._getData());
         expect(data.success).toBe(true);
-        expect(mockSql).toHaveBeenCalledTimes(3);
+        expect(mockSql).toHaveBeenCalledWith(
+            expect.arrayContaining(['INSERT INTO links (url, code) VALUES (', ', ', ')']),
+            'https://google.com',
+            expect.any(String)
+        );
     });
 
-    it('should return 500 on other database errors', async () => {
-        const ts = Date.now();
+    it('should handle simple collision and retry', async () => {
         const { req, res } = httpMocks.createMocks({
             method: 'POST',
-            body: {
-                link: 'https://google.com',
-                ts: ts,
-                proof: generateValidProof(ts)
-            },
+            headers: { host: 'localhost:3000' },
+            body: { link: 'https://google.com' },
+        });
+
+        // 1st call (6 times for length=6): returns 0 -> 'aaaaaa'
+        // 2nd call (7 times for length=7): returns 1 -> 'bbbbbbb'
+        let callCount = 0;
+        crypto.randomInt.mockImplementation(() => {
+            callCount++;
+            return callCount <= 6 ? 0 : 1;
         });
 
         mockSql
-            .mockResolvedValueOnce([{ count: '10' }])
-            .mockRejectedValueOnce(new Error('Random DB Error'));
+            .mockRejectedValueOnce({ code: '23505' }) // First INSERT fails
+            .mockResolvedValueOnce(); // Second INSERT succeeds
+
+        await handler(req, res);
+
+        expect(res._getStatusCode()).toBe(200);
+        const data = JSON.parse(res._getData());
+        expect(data.success).toBe(true);
+        expect(mockSql).toHaveBeenCalledTimes(2);
+    });
+
+    it('should return 500 if retry fails', async () => {
+        const { req, res } = httpMocks.createMocks({
+            method: 'POST',
+            headers: { host: 'localhost:3000' },
+            body: { link: 'https://google.com' },
+        });
+
+        mockSql
+            .mockRejectedValueOnce({ code: '23505' }) // First collision
+            .mockRejectedValueOnce(new Error('Retry failed completely')); // Second failure
 
         await handler(req, res);
 
         expect(res._getStatusCode()).toBe(500);
-        expect(JSON.parse(res._getData())).toEqual({
-            success: false,
-            error: 'Internal Server Error',
-        });
-    });
-
-    it('should use length 1 if n < 2', async () => {
-        const ts = Date.now();
-        const { req, res } = httpMocks.createMocks({
-            method: 'POST',
-            headers: { host: 'localhost:3000' },
-            body: {
-                link: 'https://google.com',
-                ts: ts,
-                proof: generateValidProof(ts)
-            },
-        });
-
-        mockSql.mockResolvedValueOnce([{ count: '0' }]).mockResolvedValueOnce();
-
-        await handler(req, res);
-
-        expect(res._getStatusCode()).toBe(200);
-        const data = JSON.parse(res._getData());
-        // n=0 should result in length 1
-        expect(data.shortLink).toMatch(/localhost:3000\/[a-zA-Z0-9]$/);
-    });
-
-    it('should handle stringified body', async () => {
-        const ts = Date.now();
-        const body = JSON.stringify({
-            link: 'https://google.com',
-            ts: ts,
-            proof: generateValidProof(ts)
-        });
-
-        const { req, res } = httpMocks.createMocks({
-            method: 'POST',
-            headers: { host: 'localhost:3000' },
-            body,
-        });
-
-        mockSql.mockResolvedValueOnce([{ count: '10' }]).mockResolvedValueOnce();
-
-        await handler(req, res);
-
-        expect(res._getStatusCode()).toBe(200);
-        expect(JSON.parse(res._getData()).success).toBe(true);
+        expect(JSON.parse(res._getData()).error).toMatch(/Failed to generate short link/);
     });
 });

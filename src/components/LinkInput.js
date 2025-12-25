@@ -20,21 +20,10 @@ export default function LinkInput() {
       // Optimistic Update
       setStatsCount(statsCount + 1);
 
-      // Give the premium spinner some stage time
-      await new Promise(r => setTimeout(r, 600));
 
-      const generateProof = async (ts) => {
-        const SALT = 'lite-fyi-2026-experimental-salt';
-        const msgBuffer = new TextEncoder().encode(ts + SALT);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      };
 
       try {
-        const ts = Date.now();
-        const proof = await generateProof(ts);
-        const res = await axios.post('/api/shrink', { link: link.trim(), proof, ts });
+        const res = await axios.post('/api/shrink', { link: link.trim() });
 
         if (!res.data?.success) {
           // Rollback on failure
@@ -46,7 +35,7 @@ export default function LinkInput() {
       } catch (err) {
         // Rollback on network error
         setStatsCount(statsCount);
-        setError('Failed to reach server');
+        setError(err.response?.data?.error || 'Failed to reach server');
       } finally {
         setLoading(false);
       }

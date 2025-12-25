@@ -1,50 +1,54 @@
-import { createHash } from 'crypto';
 import { neon } from '@neondatabase/serverless';
-
-const SALT = 'lite-fyi-2026-experimental-salt';
-
-async function getOptimalCodeLength(sql) {
-  const result = await sql`SELECT COUNT(*) as count FROM links`;
-  const n = parseInt(result[0].count);
-  const charsetSize = 62;
-
-  // Requirement: P(collision) < 0.0001
-  // Formula: M approx 5000 * n^2
-  // We handle n=0/1 case
-  if (n < 2) return 1;
-
-  const requiredM = 5000 * Math.pow(n, 2);
-  const length = Math.ceil(Math.log(requiredM) / Math.log(charsetSize));
-
-  return Math.max(1, length);
-}
+import crypto from 'crypto';
 
 function generateCode(length) {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
+    result += chars.charAt(crypto.randomInt(0, chars.length));
   }
   return result;
 }
 
 export default async function handler(req, res) {
-  const { link, proof, ts } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-
-  // Bot prevention: Time window check (2 seconds)
-  const now = Date.now();
-  if (!ts || Math.abs(now - ts) > 2000) {
-    return res.status(403).json({ success: false, error: 'Unauthorized: Proof expired. Please try again.' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Bot prevention: Signature check
-  const expectedProof = createHash('sha256').update(String(ts) + SALT).digest('hex');
-  if (proof !== expectedProof) {
-    return res.status(403).json({ success: false, error: 'Unauthorized: Invalid request signature.' });
+  let { link } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+
+  if (!link) {
+    return res.status(400).json({ success: false, error: 'Link is required' });
+  }
+
+  // Auto-prepend https:// if missing protocol (no ://)
+  if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(link)) {
+    link = 'https://' + link;
+  }
+
+  // 1. Validation
+  if (link.length > 2000) {
+    return res.status(400).json({ success: false, error: 'Link exceeds 2000 characters' });
+  }
+
+  try {
+    const url = new URL(link);
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+      return res.status(400).json({ success: false, error: 'Only http and https protocols are supported' });
+    }
+    // Enforce dot in hostname (basic TLD check) unless localhost
+    if (!url.hostname.includes('.') && url.hostname !== 'localhost') {
+      return res.status(400).json({ success: false, error: 'Invalid URL format' });
+    }
+  } catch (e) {
+    return res.status(400).json({ success: false, error: 'Invalid URL format' });
   }
 
   const sql = neon(process.env.DATABASE_URL);
-  const length = await getOptimalCodeLength(sql);
+
+  // 2. Optimistic Code Generation (Fixed Length = 6)
+  // 6 chars base64url = ~68 billion combinations
+  const length = 6;
   const code = generateCode(length);
 
   try {
@@ -54,10 +58,18 @@ export default async function handler(req, res) {
   } catch (err) {
     // Unique constraint violation (collision)
     if (err.code === '23505') {
-      const moreSecureCode = generateCode(length + 1);
-      await sql`INSERT INTO links (url, code) VALUES (${link}, ${moreSecureCode})`;
-      res.status(200).json({ success: true, shortLink: `${req.headers.host}/${moreSecureCode}` });
+      // Retry once with a slightly longer code to avoid infinite loops
+      const retryCode = generateCode(length + 1);
+      try {
+        await sql`INSERT INTO links (url, code) VALUES (${link}, ${retryCode})`;
+        const shortLink = `${req.headers.host}/${retryCode}`;
+        res.status(200).json({ success: true, shortLink });
+      } catch (retryErr) {
+        console.error('Collision retry failed:', retryErr);
+        res.status(500).json({ success: false, error: 'Failed to generate short link, please try again.' });
+      }
     } else {
+      console.error('Database error:', err);
       res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
   }
