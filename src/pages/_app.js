@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import '../index.css';
 import '../App.css';
 
+import { Analytics } from '@vercel/analytics/next';
+
 setGlobal({
     error: '',
     link: '',
@@ -13,7 +15,12 @@ setGlobal({
 });
 
 function MyApp({ Component, pageProps }) {
-    return <Component {...pageProps} />;
+    return (
+        <>
+            <Component {...pageProps} />
+            <Analytics />
+        </>
+    );
 }
 
 export default MyApp;
